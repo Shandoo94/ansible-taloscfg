@@ -1,0 +1,60 @@
+galaxy_info:
+  author: Shandoo
+  description: Orchestration for generating talos machine configs
+  license: MIT
+  role_name: taloscfg
+  namespace: taloscfg
+  min_ansible_version: "2.9"
+
+argument_specs:
+  main:
+    short_description: Generate Talos machine configuration bundles and per-node specs.
+    options:
+      taloscfg_server_group:
+        type: str
+        required: false
+        description: Inventory group name identifying Talos control plane nodes.
+      taloscfg_worker_group:
+        type: str
+        required: false
+        description: Inventory group name identifying Talos worker nodes.
+      taloscfg_common_patches:
+        type: list
+        elements: str
+        required: false
+        description: Sequence of patch file paths applied to all Talos nodes.
+      taloscfg_common_server_patches:
+        type: list
+        elements: str
+        required: false
+        description: Sequence of patch file paths applied only to control plane nodes.
+      taloscfg_common_worker_patches:
+        type: list
+        elements: str
+        required: false
+        description: Sequence of patch file paths applied only to worker nodes.
+      taloscfg_machine_patches:
+        type: list
+        elements: str
+        required: false
+        description: Sequence of patch file paths applied to the current inventory host.
+      taloscfg_target_directory:
+        type: path
+        required: false
+        description: Destination directory where generated Talos configuration files are written.
+      taloscfg_secrets_file:
+        type: path
+        required: true
+        description: Path to the SOPS-encrypted Talos secrets file.
+      taloscfg_secrets_file_decrypted:
+        type: path
+        required: false
+        description: Temporary path where decrypted Talos secrets are stored.
+      taloscfg_cluster_name:
+        type: str
+        required: false
+        description: Name of the Talos cluster used during configuration generation.
+      taloscfg_api_endpoint_cidr:
+        type: str
+        required: false
+        description: API endpoint address (with CIDR) used for Talos control plane access.
