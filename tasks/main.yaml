@@ -1,0 +1,89 @@
+- name: Generate Talos machineconfig
+  when: taloscfg_server_group in group_names or taloscfg_worker_group in group_names
+  connection: local
+  block:
+    - name: Ensure generated directory exists
+      ansible.builtin.file:
+        path: "{{ taloscfg_target_directory }}"
+        state: directory
+        mode: "0755"
+      run_once: true
+
+    - name: Write decrypted secrets to a temporary file
+      ansible.builtin.copy:
+        content: "{{ lookup('ansible.builtin.file', taloscfg_secrets_file) | community.sops.decrypt }}"
+        dest: "{{ taloscfg_secrets_file_decrypted }}"
+        mode: "0600"
+      run_once: true
+
+    - name: Render machineconfig
+      vars:
+        taloscfg_patch_flag: >-
+          {% if taloscfg_server_group in group_names %}
+            --config-patch-control-plane
+          {% else %}
+            --config-patch-worker
+          {% endif %}
+        taloscfg_output_type: >-
+          {% if taloscfg_server_group in group_names %}
+            --output-types controlplane
+          {% else %}
+            --output-types worker
+          {% endif %}
+        taloscfg_patch_args: >-
+          {% for patch in taloscfg_common_patches %}
+            {{ taloscfg_patch_flag }} @{{ patch }}
+          {% endfor %} {% for patch in taloscfg_machine_patches %}
+            {{ taloscfg_patch_flag }} @{{ patch }}
+          {% endfor %} {% if taloscfg_server_group in group_names %}
+            {% for patch in taloscfg_common_server_patches %}
+              {{ taloscfg_patch_flag }} @{{ patch }}
+            {% endfor %}
+          {% else %}
+            {% for patch in taloscfg_common_worker_patches %}
+              {{ taloscfg_patch_flag }} @{{ patch }}
+            {% endfor %}
+          {% endif %}
+      ansible.builtin.command: >-
+        talosctl gen config {{ taloscfg_cluster_name }}
+        https://{{ taloscfg_api_endpoint_cidr | ansible.utils.ipaddr('ip') }}:{{ taloscfg_api_endpoint_port }}
+        --force
+        --with-secrets {{ taloscfg_secrets_file_decrypted }}
+        {{ taloscfg_patch_args }}
+        {{ taloscfg_output_type }}
+        -o -
+      register: talosctl_machineconfig
+      changed_when: false
+      no_log: true
+
+    - name: Write machineconfig
+      ansible.builtin.copy:
+        content: "{{ talosctl_machineconfig.stdout }}"
+        dest: "{{ taloscfg_target_directory }}/{{ inventory_hostname }}.yaml"
+        mode: "0600"
+
+    - name: Render taloscfg
+      ansible.builtin.command: >-
+        talosctl gen config {{ taloscfg_cluster_name }}
+        https://{{ taloscfg_api_endpoint_cidr | ansible.utils.ipaddr('ip') }}:{{ taloscfg_api_endpoint_port }}
+        --force
+        --with-secrets {{ taloscfg_secrets_file_decrypted }}
+        --output-types talosconfig
+        -o -
+      register: talosctl_taloscfg
+      changed_when: false
+      run_once: true
+      no_log: true
+
+    - name: Write taloscfg
+      ansible.builtin.copy:
+        content: "{{ talosctl_taloscfg.stdout }}"
+        dest: "{{ taloscfg_target_directory }}/{{ taloscfg_cluster_name }}.yaml"
+        mode: "0600"
+      run_once: true
+  always:
+    - name: Clean up decrypted secrets
+      ansible.builtin.file:
+        path: "{{ taloscfg_secrets_file_decrypted }}"
+        state: absent
+      run_once: true

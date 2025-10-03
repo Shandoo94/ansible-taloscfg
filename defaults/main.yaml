@@ -1,0 +1,11 @@
+taloscfg_server_group: "servers"
+taloscfg_worker_group: "workers"
+taloscfg_common_patches: []
+taloscfg_common_server_patches: []
+taloscfg_common_worker_patches: []
+taloscfg_machine_patches: []
+taloscfg_target_directory: "{{ playbook_dir }}/cache"
+taloscfg_secrets_file_decrypted: "{{ taloscfg_target_directory }}/secrets.yaml"
+taloscfg_cluster_name: "talos-cluster"
+taloscfg_api_endpoint_cidr: "10.10.10.5/24"
+taloscfg_api_endpoint_port: 6443
