@@ -1,0 +1,14 @@
+- name: Generate patch for high availability
+  when:
+    - taloscfg_server_group is in group_names
+    - taloscfg_api_use_vip
+  block:
+    - name: Render vip patch
+      ansible.builtin.template:
+        src: patch-vip.yaml.j2
+        dest: "{{ taloscfg_target_dir }}/patch-vip.yaml"
+        mode: "0755"
+
+    - name: Create cli argument
+      ansible.builtin.set_fact:
+        taloscfg_vip_arg: "--config-patch-control-plane @{{ taloscfg_target_dir }}/patch-vip.yaml"
