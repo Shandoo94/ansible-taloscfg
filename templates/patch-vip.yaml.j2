@@ -1,0 +1,7 @@
+machine:
+  network:
+    interfaces:
+      - interface: {{ taloscfg_vip_interface_name }}
+        dhcp: true
+        vip:
+          ip: {{ taloscfg_api_endpoint_cidr | ansible.utils.ipaddr('ip') }}
