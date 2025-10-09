@@ -1,0 +1,12 @@
+cluster:
+  network:
+    cni:
+      name: none
+{{% if taloscfg_cilium_repace_kubeproxy %}}
+  proxy:
+    disabled: true
+{{% endif %}}
+  inlineManifests:
+    - name: cilium
+      contents: |
+        {{ taloscfg_cilium_manifest.stdout }}
