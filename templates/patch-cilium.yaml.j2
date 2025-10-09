@@ -2,10 +2,10 @@ cluster:
   network:
     cni:
       name: none
-{{% if taloscfg_cilium_repace_kubeproxy %}}
+{% if taloscfg_cilium_repace_kubeproxy %}
   proxy:
     disabled: true
-{{% endif %}}
+{% endif %}
   inlineManifests:
     - name: cilium
       contents: |
