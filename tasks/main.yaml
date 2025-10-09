@@ -19,6 +19,9 @@
     - name: Create vip patch
       ansible.builtin.include_tasks: ha.yaml
 
+    - name: Create cilium patch
+      ansible.builtin.include_tasks: cilium.yaml
+
     - name: Render machineconfig
       vars:
         taloscfg_patch_flag: >-
