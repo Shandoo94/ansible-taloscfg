@@ -35,3 +35,7 @@
         src: patch-cilium.yaml.j2
         dest: "{{ taloscfg_target_dir }}/patch-cilium.yaml"
         mode: "0755"
+
+    - name: Create cli argument
+      ansible.builtin.set_fact:
+        taloscfg_cilium_arg: "--config-patch-control-plane @{{ taloscfg_target_dir }}/patch-cilium.yaml"

@@ -60,6 +60,7 @@
         {{ taloscfg_patch_args }}
         {{ taloscfg_output_type }}
         {{ taloscfg_vip_arg | default("") }}
+        {{ taloscfg_cilium_arg | default("") }}
         -o -
       register: talosctl_machineconfig
       changed_when: false
