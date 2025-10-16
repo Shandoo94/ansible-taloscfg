@@ -19,7 +19,7 @@
         --set securityContext.capabilities.cleanCiliumState="{NET_ADMIN,SYS_ADMIN,SYS_RESOURCE}"
         --set cgroup.autoMount.enabled=false
         --set cgroup.hostRoot=/sys/fs/cgroup
-        {% if taloscfg_cilium_repace_kubeproxy %}
+        {% if taloscfg_cilium_replace_kubeproxy %}
           --set k8sServiceHost=localhost
           --set k8sServicePort=7445
           --set kubeProxyReplacement=true

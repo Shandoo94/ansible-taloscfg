@@ -2,7 +2,7 @@ cluster:
   network:
     cni:
       name: none
-{% if taloscfg_cilium_repace_kubeproxy %}
+{% if taloscfg_cilium_replace_kubeproxy %}
   proxy:
     disabled: true
 {% endif %}
