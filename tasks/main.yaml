@@ -57,6 +57,7 @@
         --with-secrets {{ taloscfg_secrets_file_decrypted }}
         --kubernetes-version {{ taloscfg_kubernetes_version }}
         --talos-version {{ taloscfg_talos_version }}
+        --config-patch '[{"op": "add", "path": "/machine/network/hostname", "value": "{{ inventory_hostname }}"}]'
         {{ taloscfg_patch_args }}
         {{ taloscfg_output_type }}
         {{ taloscfg_vip_arg | default("") }}
