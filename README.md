@@ -20,6 +20,7 @@ An Ansible role for automating the generation of Talos machine configuration bun
 
 ### Ansible Collections
 - `community.sops` - Required for SOPS secret decryption
+- `ansible.utils` - Required for IP address filtering
 
 ## Quick Start
 
