@@ -60,7 +60,7 @@ An Ansible role for automating the generation of Talos machine configuration bun
 | `taloscfg_api_endpoint_port` | No | `6443` | TCP port for API endpoint |
 | `taloscfg_kubernetes_version` | No | `v1.34.0` | Kubernetes version |
 | `taloscfg_talos_version` | No | `v1.11.1` | Talos OS version |
-| `taloscfg_target_dir` | No | `{{ playbook_dir }}/cache` | Output directory for generated configs |
+| `taloscfg_target_dir` | No | `{{ playbook_dir }}/.cache` | Output directory for generated configs |
 
 ### Inventory Groups
 
