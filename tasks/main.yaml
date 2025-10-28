@@ -100,3 +100,12 @@
         path: "{{ taloscfg_secrets_file_decrypted }}"
         state: absent
       run_once: true
+
+    - name: Clean up generated patches
+      ansible.builtin.file:
+        path: "{{ taloscfg_target_dir }}/{{ item }}"
+        state: absent
+      loop:
+        - patch-cilium.yaml
+        - patch-vip.yaml
+      run_once: true
