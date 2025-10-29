@@ -5,7 +5,7 @@ taloscfg_common_server_patches: []
 taloscfg_common_worker_patches: []
 taloscfg_machine_patches: []
 taloscfg_target_dir: "{{ playbook_dir }}/.cache"
-taloscfg_secrets_file_decrypted: "{{ taloscfg_target_dir }}/secrets.yaml"
+taloscfg_secrets_file_decrypted: "/tmp/talos-secrets-{{ taloscfg_cluster_name }}-{{ ansible_date_time.epoch }}.yaml"
 taloscfg_cluster_name: "talos-cluster"
 taloscfg_kubernetes_version: v1.34.0
 taloscfg_talos_version: v1.11.1
