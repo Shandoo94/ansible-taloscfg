@@ -7,7 +7,7 @@
       ansible.builtin.template:
         src: patch-vip.yaml.j2
         dest: "{{ taloscfg_target_dir }}/patch-vip.yaml"
-        mode: "0755"
+        mode: "0644"
 
     - name: Create cli argument
       ansible.builtin.set_fact:

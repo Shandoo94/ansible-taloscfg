@@ -19,6 +19,9 @@
     - name: Create vip patch
       ansible.builtin.include_tasks: ha.yaml
 
+    - name: Create cilium patch
+      ansible.builtin.include_tasks: cilium.yaml
+
     - name: Render machineconfig
       vars:
         taloscfg_patch_flag: >-
@@ -54,9 +57,11 @@
         --with-secrets {{ taloscfg_secrets_file_decrypted }}
         --kubernetes-version {{ taloscfg_kubernetes_version }}
         --talos-version {{ taloscfg_talos_version }}
+        --config-patch '[{"op": "add", "path": "/machine/network/hostname", "value": "{{ inventory_hostname }}"}]'
         {{ taloscfg_patch_args }}
         {{ taloscfg_output_type }}
         {{ taloscfg_vip_arg | default("") }}
+        {{ taloscfg_cilium_arg | default("") }}
         -o -
       register: talosctl_machineconfig
       changed_when: false
@@ -94,4 +99,13 @@
       ansible.builtin.file:
         path: "{{ taloscfg_secrets_file_decrypted }}"
         state: absent
+      run_once: true
+
+    - name: Clean up generated patches
+      ansible.builtin.file:
+        path: "{{ taloscfg_target_dir }}/{{ item }}"
+        state: absent
+      loop:
+        - patch-cilium.yaml
+        - patch-vip.yaml
       run_once: true
