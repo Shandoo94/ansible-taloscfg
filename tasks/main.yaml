@@ -6,7 +6,7 @@
       ansible.builtin.file:
         path: "{{ taloscfg_target_dir }}/{{ taloscfg_cluster_name }}"
         state: directory
-        mode: "0755"
+        mode: "0700"
       run_once: true
 
     - name: Write decrypted secrets to a temporary file
@@ -73,6 +73,7 @@
         content: "{{ talosctl_machineconfig.stdout }}"
         dest: "{{ taloscfg_target_dir }}/{{ taloscfg_cluster_name }}/{{ inventory_hostname }}.yaml"
         mode: "0600"
+      no_log: true
 
     - name: Render taloscfg
       ansible.builtin.command: >-
@@ -95,6 +96,7 @@
         dest: "{{ taloscfg_target_dir }}/{{ taloscfg_cluster_name }}/{{ taloscfg_cluster_name }}.yaml"
         mode: "0600"
       run_once: true
+      no_log: true
   always:
     - name: Clean up decrypted secrets
       ansible.builtin.file:
