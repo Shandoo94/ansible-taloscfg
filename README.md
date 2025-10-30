@@ -5,7 +5,7 @@ An Ansible role for automating the generation of Talos machine configuration bun
 ## Features
 
 - **Automated Configuration Generation**: Generates both control plane and worker node configurations using `talosctl`
-- **SOPS Integration**: Seamlessly decrypts SOPS-encrypted secrets during configuration generation
+- **Ansible Vault Integration**: Seamlessly decrypts Ansible Vault-encrypted secrets during configuration generation
 - **Flexible Patching System**: Supports multiple levels of configuration patches (common, role-specific, and host-specific)
 - **CNI Support**: Built-in support for Cilium CNI with Helm chart integration
 - **High Availability**: Optional VIP configuration for control plane high availability
@@ -19,7 +19,6 @@ An Ansible role for automating the generation of Talos machine configuration bun
 - `helm` CLI for Cilium CNI support (optional)
 
 ### Ansible Collections
-- `community.sops` - Required for SOPS secret decryption
 - `ansible.utils` - Required for IP address filtering
 
 ## Quick Start
@@ -54,7 +53,7 @@ An Ansible role for automating the generation of Talos machine configuration bun
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `taloscfg_secrets_file` | Yes | - | Path to SOPS-encrypted Talos secrets file |
+| `taloscfg_secrets_file` | Yes | - | Path to Ansible Vault-encrypted Talos secrets file |
 | `taloscfg_cluster_name` | No | `talos-cluster` | Name of the Talos cluster |
 | `taloscfg_api_endpoint_cidr` | No | `10.10.10.5/24` | API endpoint address with CIDR |
 | `taloscfg_api_endpoint_port` | No | `6443` | TCP port for API endpoint |
@@ -144,4 +143,22 @@ Generated configurations are stored in:
 
 - Secrets are decrypted temporarily and automatically cleaned up
 - Generated configuration files have restricted permissions (0600)
-- SOPS integration ensures secrets remain encrypted at rest
+- Ansible Vault integration ensures secrets remain encrypted at rest
+
+## Secrets Management
+
+### Creating an Encrypted Secrets File
+
+Generate a secrets bundle with `talosctl` and encrypt it:
+```bash
+talosctl gen secrets -o secrets.yaml  
+ansible-vault encrypt secrets.yaml
+```
+
+### Using the Role with Vault
+
+When running your playbook, provide the vault password:
+```bash
+# Prompt for password
+ansible-playbook -i inventory playbook.yaml --ask-vault-pass
+```

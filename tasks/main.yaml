@@ -6,15 +6,16 @@
       ansible.builtin.file:
         path: "{{ taloscfg_target_dir }}/{{ taloscfg_cluster_name }}"
         state: directory
-        mode: "0755"
+        mode: "0700"
       run_once: true
 
     - name: Write decrypted secrets to a temporary file
       ansible.builtin.copy:
-        content: "{{ lookup('ansible.builtin.file', taloscfg_secrets_file) | community.sops.decrypt }}"
+        content: "{{ lookup('ansible.builtin.file', taloscfg_secrets_file) }}"
         dest: "{{ taloscfg_secrets_file_decrypted }}"
         mode: "0600"
       run_once: true
+      no_log: true
 
     - name: Create vip patch
       ansible.builtin.include_tasks: ha.yaml
@@ -72,6 +73,7 @@
         content: "{{ talosctl_machineconfig.stdout }}"
         dest: "{{ taloscfg_target_dir }}/{{ taloscfg_cluster_name }}/{{ inventory_hostname }}.yaml"
         mode: "0600"
+      no_log: true
 
     - name: Render taloscfg
       ansible.builtin.command: >-
@@ -94,6 +96,7 @@
         dest: "{{ taloscfg_target_dir }}/{{ taloscfg_cluster_name }}/{{ taloscfg_cluster_name }}.yaml"
         mode: "0600"
       run_once: true
+      no_log: true
   always:
     - name: Clean up decrypted secrets
       ansible.builtin.file:

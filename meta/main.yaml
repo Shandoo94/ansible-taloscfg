@@ -45,7 +45,7 @@ argument_specs:
       taloscfg_secrets_file:
         type: path
         required: true
-        description: Path to the SOPS-encrypted Talos secrets file.
+        description: Path to the Ansible Vault-encrypted Talos secrets file.
       taloscfg_secrets_file_decrypted:
         type: path
         required: false
