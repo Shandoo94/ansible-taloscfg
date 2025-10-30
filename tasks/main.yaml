@@ -17,10 +17,14 @@
       run_once: true
       no_log: true
 
-    - name: Create vip patch
+    - name: Include tasks to create vIP
+      when:
+        - taloscfg_server_group is in group_names
+        - taloscfg_api_use_vip
       ansible.builtin.include_tasks: ha.yaml
 
-    - name: Create cilium patch
+    - name: Include tasks to create cilium patch
+      when: taloscfg_use_cilium_cni
       ansible.builtin.include_tasks: cilium.yaml
 
     - name: Render machineconfig

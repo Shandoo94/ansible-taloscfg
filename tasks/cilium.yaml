@@ -1,5 +1,4 @@
 - name: Generate cilium inline manifest
-  when: taloscfg_use_cilium_cni
   run_once: true
   block:
     - name: Render manifest from helm
