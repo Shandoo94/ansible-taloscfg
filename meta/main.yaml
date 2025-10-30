@@ -99,4 +99,4 @@ argument_specs:
         type: list
         elements: dict
         required: false
-        description: List of raw volume configurations; each dict defines options (e.g., name, diskSelector, minSize, maxSize) and a counter for generating multiple instances via template loops.
+        description: List of raw volume configurations; each dict defines options (e.g., name, diskSelector, minSize, maxSize) and a count for generating multiple instances via template loops.
