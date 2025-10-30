@@ -95,3 +95,8 @@ argument_specs:
         elements: str
         required: false
         description: Additional Helm CLI arguments appended when templating the Cilium chart.
+      taloscfg_rawVolume_list:
+        type: list
+        elements: dict
+        required: false
+        description: List of raw volume configurations; each dict defines options (e.g., name, diskSelector, minSize, maxSize) and a counter for generating multiple instances via template loops.

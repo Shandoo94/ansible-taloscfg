@@ -17,3 +17,4 @@ taloscfg_use_cilium_cni: false
 taloscfg_cilium_replace_kubeproxy: false
 taloscfg_cilium_version: 1.18.2
 taloscfg_cilium_helm_args: []
+taloscfg_rawVolume_list: []

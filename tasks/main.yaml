@@ -27,6 +27,10 @@
       when: taloscfg_use_cilium_cni
       ansible.builtin.include_tasks: cilium.yaml
 
+    - name: Include tasks to generate raw volume patches
+      when: taloscfg_rawVolume_list | length > 0
+      ansible.builtin.include_tasks: raw_vol.yaml
+
     - name: Render machineconfig
       vars:
         taloscfg_patch_flag: >-
@@ -67,6 +71,7 @@
         {{ taloscfg_output_type }}
         {{ taloscfg_vip_arg | default("") }}
         {{ taloscfg_cilium_arg | default("") }}
+        {{ taloscfg_rawVolume_arg | default("") }}
         -o -
       register: talosctl_machineconfig
       changed_when: false

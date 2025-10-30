@@ -1,0 +1,13 @@
+{{% for volumes in taloscfg_rawVolume_list %}}
+{{% for n in range(volumes.counter) %}}
+---
+apiVersion: v1alpha1
+kind: RawVolumeConfig
+name: {{ volumes.name }}-{{ n }}
+provisioning:
+  diskSelector:
+    match: {{ volumes.diskSelector }}
+  minSize: {{ volumes.minSize }}
+  maxSize: {{ volumes.maxSize }}
+{{% end for %}}
+{{% end for %}}
