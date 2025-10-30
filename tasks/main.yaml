@@ -120,4 +120,5 @@
       loop:
         - patch-cilium.yaml
         - patch-vip.yaml
+        - patch-rawVolume.yaml
       run_once: true
