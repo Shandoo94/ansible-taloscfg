@@ -90,11 +90,6 @@ argument_specs:
         type: str
         required: false
         description: Version of the Cilium Helm chart rendered for deployment.
-      taloscfg_cilium_helm_args:
-        type: list
-        elements: str
-        required: false
-        description: Additional Helm CLI arguments appended when templating the Cilium chart.
       taloscfg_rawVolume_list:
         type: list
         elements: dict
