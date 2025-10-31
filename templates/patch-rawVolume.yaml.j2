@@ -8,7 +8,7 @@ name: {{ volumes.name }}-{{ n }}
 provisioning:
 {% if volumes.diskSelector is defined %}
   diskSelector:
-    match: {{ volumes.diskSelector }}
+    match: "{{ volumes.diskSelector }}"
 {% endif %}
 {% if volumes.minSize is defined %}
   minSize: {{ volumes.minSize }}
