@@ -7,7 +7,9 @@ An Ansible role for automating the generation of Talos machine configuration bun
 - **Automated Configuration Generation**: Generates both control plane and worker node configurations using `talosctl`
 - **Ansible Vault Integration**: Seamlessly decrypts Ansible Vault-encrypted secrets during configuration generation
 - **Flexible Patching System**: Supports multiple levels of configuration patches (common, role-specific, and host-specific)
-- **CNI Support**: Built-in support for Cilium CNI with Helm chart integration
+- **CNI Support**: Built-in support for Cilium CNI (minimal configuration only)
+- **Raw Volume Management**: For convenience, multiple machine patches for raw volumes can be defined via templates. Useful for e.g. NAS nodes with many disks.
+- **Installer Image Customization**: Integrate with Talos factory API for custom installer images
 - **High Availability**: Optional VIP configuration for control plane high availability
 - **Secure by Default**: Automatically cleans up decrypted secrets after generation
 
@@ -27,7 +29,7 @@ An Ansible role for automating the generation of Talos machine configuration bun
 ```yaml
 - hosts: talos_nodes
   roles:
-    - role: taloscfg.taloscfg
+    - role: taloscfg
       vars:
         taloscfg_secrets_file: "{{ playbook_dir }}/secrets/secrets.yaml"
         taloscfg_cluster_name: "my-cluster"
@@ -38,13 +40,48 @@ An Ansible role for automating the generation of Talos machine configuration bun
 ```yaml
 - hosts: talos_nodes
   roles:
-    - role: taloscfg.taloscfg
+    - role: taloscfg
       vars:
         taloscfg_secrets_file: "{{ playbook_dir }}/secrets/secrets.yaml"
         taloscfg_cluster_name: "my-cluster"
         taloscfg_api_endpoint_cidr: "10.0.0.10/24"
         taloscfg_use_cilium_cni: true
         taloscfg_cilium_replace_kubeproxy: true
+```
+
+### With Raw Volume Management
+```yaml
+- hosts: talos_nodes
+  roles:
+    - role: taloscfg
+      vars:
+        taloscfg_secrets_file: "{{ playbook_dir }}/secrets/secrets.yaml"
+        taloscfg_cluster_name: "my-cluster"
+        taloscfg_api_endpoint_cidr: "10.0.0.10/24"
+        taloscfg_rawVolume_list:
+          - name: "data"
+            diskSelector: "!system_disk"
+            minSize: "2GB"
+            maxSize: "500GB"
+            count: 2
+```
+
+### With Installer Image Customization
+```yaml
+- hosts: talos_nodes
+  roles:
+    - role: taloscfg
+      vars:
+        taloscfg_secrets_file: "{{ playbook_dir }}/secrets/secrets.yaml"
+        taloscfg_cluster_name: "my-cluster"
+        taloscfg_api_endpoint_cidr: "10.0.0.10/24"
+        taloscfg_talos_image_schematic:
+          customization:
+            systemExtensions:
+              officialExtensions:
+                - siderolabs/drbd
+                - siderolabs/zfs
+        taloscfg_talos_image_type: "metal"
 ```
 
 ## Configuration
@@ -104,18 +141,64 @@ To use Cilium as the CNI, set `taloscfg_use_cilium_cni` to `true`. The role will
 | `taloscfg_use_cilium_cni` | `false` | Enable Cilium CNI |
 | `taloscfg_cilium_version` | `1.18.2` | Cilium Helm chart version |
 | `taloscfg_cilium_replace_kubeproxy` | `false` | Enable kube-proxy replacement |
-| `taloscfg_cilium_helm_args` | `[]` | Additional Helm arguments |
 
 #### Example Cilium Configuration
 ```yaml
 taloscfg_use_cilium_cni: true
 taloscfg_cilium_replace_kubeproxy: true
 taloscfg_cilium_version: "1.18.2"
-taloscfg_cilium_helm_args:
-  - "operator.replicas=2"
-  - "hubble.relay.enabled=true"
-  - "hubble.ui.enabled=true"
 ```
+
+**Note:** Cilium customization via Helm arguments has been removed for determinism. Apply customizations post-installation.
+
+## Raw Volume Management
+
+Configure sets of raw volumes for Talos machines using a list of volume specifications. Each entry supports optional fields and a counter for generating multiple instances.
+
+#### Raw Volume Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `taloscfg_rawVolume_list` | `[]` | List of raw volume configurations (dicts with name, diskSelector, minSize, maxSize, count) |
+
+#### Example Raw Volume Configuration
+```yaml
+taloscfg_rawVolume_list:
+  - name: "data"
+    diskSelector: "!system_disk"
+    minSize: "100GB"
+    maxSize: "500GB"
+    count: 2
+  - name: "logs"
+    diskSelector: "disk.transport == 'sata'"
+    count: 1
+```
+
+This generates patches for RawVolumeConfig manifests, allowing matrix-like volume creation with CEL expressions for disk selection.
+
+## Installer Image Customization
+
+Customize Talos installer images via the factory API by providing a schematic configuration. The role fetches the image ID and patches the machine config.
+
+#### Installer Image Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `taloscfg_talos_image_schematic` | - | Dict for schematic customization (e.g., system extensions) |
+| `taloscfg_talos_image_type` | `metal` | Installer image type (e.g., metal, aws, gcp) |
+
+#### Example Installer Image Configuration
+```yaml
+taloscfg_talos_image_schematic:
+  customization:
+    systemExtensions:
+      officialExtensions:
+        - siderolabs/drbd
+        - siderolabs/zfs
+taloscfg_talos_image_type: "metal"
+```
+
+This POSTs the schematic to `https://factory.talos.dev/schematics` and uses the returned ID to set the installer image.
 
 ## High Availability
 

@@ -8,7 +8,12 @@ taloscfg_target_dir: "{{ playbook_dir }}/.cache"
 taloscfg_secrets_file_decrypted: "/tmp/talos-secrets-{{ taloscfg_cluster_name }}.yaml"
 taloscfg_cluster_name: "talos-cluster"
 taloscfg_kubernetes_version: v1.34.0
-taloscfg_talos_version: v1.11.1
+taloscfg_talos_version: v1.11.3
+taloscfg_talos_image_schematic:
+  customization:
+    systemExtensions:
+      officialExtensions:
+taloscfg_talos_image_type: "metal"
 taloscfg_api_endpoint_cidr: "10.10.10.5/24"
 taloscfg_api_endpoint_port: 6443
 taloscfg_api_use_vip: false
@@ -16,4 +21,4 @@ taloscfg_vip_interface_name: eth0
 taloscfg_use_cilium_cni: false
 taloscfg_cilium_replace_kubeproxy: false
 taloscfg_cilium_version: 1.18.2
-taloscfg_cilium_helm_args: []
+taloscfg_rawVolume_list: []

@@ -17,11 +17,32 @@
       run_once: true
       no_log: true
 
-    - name: Create vip patch
+    - name: Get installer image ID
+      ansible.builtin.uri:
+        url: "https://factory.talos.dev/schematics"
+        method: POST
+        body: "{{ taloscfg_talos_image_schematic | to_yaml }}"
+        body_format: "raw"
+        headers:
+          Content-Type: "application/x-yaml"
+        return_content: yes
+        status_code: 200
+      register: taloscfg_schematic_response
+      run_once: true
+
+    - name: Include tasks to create vIP
+      when:
+        - taloscfg_server_group is in group_names
+        - taloscfg_api_use_vip
       ansible.builtin.include_tasks: ha.yaml
 
-    - name: Create cilium patch
+    - name: Include tasks to create cilium patch
+      when: taloscfg_use_cilium_cni
       ansible.builtin.include_tasks: cilium.yaml
+
+    - name: Include tasks to generate raw volume patches
+      when: taloscfg_rawVolume_list | length > 0
+      ansible.builtin.include_tasks: raw_vol.yaml
 
     - name: Render machineconfig
       vars:
@@ -51,6 +72,8 @@
               {{ taloscfg_patch_flag }} @{{ patch }}
             {% endfor %}
           {% endif %}
+        taloscfg_installer_arg: >-
+          --config-patch '[{"op": "add", "path": "/machine/install/image", "value": "factory.talos.dev/{{ taloscfg_talos_image_type }}-installer/{{ taloscfg_schematic_response.json.id }}:{{ taloscfg_talos_version }}"}]'
       ansible.builtin.command: >-
         talosctl gen config {{ taloscfg_cluster_name }}
         https://{{ taloscfg_api_endpoint_cidr | ansible.utils.ipaddr('ip') }}:{{ taloscfg_api_endpoint_port }}
@@ -60,9 +83,11 @@
         --talos-version {{ taloscfg_talos_version }}
         --config-patch '[{"op": "add", "path": "/machine/network/hostname", "value": "{{ inventory_hostname }}"}]'
         {{ taloscfg_patch_args }}
+        {{ taloscfg_installer_arg }}
         {{ taloscfg_output_type }}
         {{ taloscfg_vip_arg | default("") }}
         {{ taloscfg_cilium_arg | default("") }}
+        {{ taloscfg_rawVolume_arg | default("") }}
         -o -
       register: talosctl_machineconfig
       changed_when: false
@@ -111,4 +136,5 @@
       loop:
         - patch-cilium.yaml
         - patch-vip.yaml
+        - patch-rawVolume.yaml
       run_once: true
