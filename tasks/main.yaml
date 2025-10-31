@@ -74,6 +74,8 @@
           {% endif %}
         taloscfg_installer_arg: >-
           --config-patch '[{"op": "add", "path": "/machine/install/image", "value": "factory.talos.dev/{{ taloscfg_talos_image_type }}-installer/{{ taloscfg_schematic_response.json.id }}:{{ taloscfg_talos_version }}"}]'
+        taloscfg_hostname_arg: >-
+          --config-patch '[{"op": "add", "path": "/machine/network/hostname", "value": "{{ inventory_hostname }}"}]'
       ansible.builtin.command: >-
         talosctl gen config {{ taloscfg_cluster_name }}
         https://{{ taloscfg_api_endpoint_cidr | ansible.utils.ipaddr('ip') }}:{{ taloscfg_api_endpoint_port }}
@@ -81,7 +83,7 @@
         --with-secrets {{ taloscfg_secrets_file_decrypted }}
         --kubernetes-version {{ taloscfg_kubernetes_version }}
         --talos-version {{ taloscfg_talos_version }}
-        --config-patch '[{"op": "add", "path": "/machine/network/hostname", "value": "{{ inventory_hostname }}"}]'
+        {{ taloscfg_hostname_arg }}
         {{ taloscfg_patch_args }}
         {{ taloscfg_installer_arg }}
         {{ taloscfg_output_type }}
