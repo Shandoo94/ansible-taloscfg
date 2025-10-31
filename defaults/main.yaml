@@ -9,6 +9,11 @@ taloscfg_secrets_file_decrypted: "/tmp/talos-secrets-{{ taloscfg_cluster_name }}
 taloscfg_cluster_name: "talos-cluster"
 taloscfg_kubernetes_version: v1.34.0
 taloscfg_talos_version: v1.11.3
+taloscfg_talos_image_schematic:
+  customization:
+    systemExtensions:
+      officialExtensions:
+taloscfg_talos_image_type: "metal"
 taloscfg_api_endpoint_cidr: "10.10.10.5/24"
 taloscfg_api_endpoint_port: 6443
 taloscfg_api_use_vip: false

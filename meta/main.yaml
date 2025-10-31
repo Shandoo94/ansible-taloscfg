@@ -95,3 +95,11 @@ argument_specs:
         elements: dict
         required: false
         description: List of raw volume configurations; each dict defines options (e.g., name, diskSelector, minSize, maxSize) and a count for generating multiple instances via template loops.
+      taloscfg_talos_image_schematic:
+        type: dict
+        required: false
+        description: Schematic configuration dict for customizing the Talos installer image via factory.talos.dev API.
+      taloscfg_talos_image_type:
+        type: str
+        required: false
+        description: Type of Talos installer image (e.g., 'metal', 'aws', 'gcp') used in the factory image URL.
