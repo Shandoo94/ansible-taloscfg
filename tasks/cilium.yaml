@@ -13,9 +13,6 @@
         --set securityContext.capabilities.cleanCiliumState="{NET_ADMIN,SYS_ADMIN,SYS_RESOURCE}"
         --set cgroup.autoMount.enabled=false
         --set cgroup.hostRoot=/sys/fs/cgroup
-        --set hubble.enabled=false
-        --set clustermesh.enabled=false
-        --set authentication.mutual.spire.enabled=false
         {% if taloscfg_cilium_replace_kubeproxy %}
           --set k8sServiceHost=localhost
           --set k8sServicePort=7445
@@ -23,6 +20,9 @@
         {% else %}
           --set kubeProxyReplacement=false
         {% endif %}
+        --set hubble.enabled=false
+        --set clustermesh.enabled=false
+        --set authentication.mutual.spire.enabled=false
       register: taloscfg_cilium_manifest
       changed_when: false
 
