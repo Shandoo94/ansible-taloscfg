@@ -33,7 +33,7 @@
     - name: Download installer ISO
       ansible.builtin.get_url:
         url: "https://factory.talos.dev/image/{{ taloscfg_schematic_response.json.id }}/{{ taloscfg_talos_version }}/{{ taloscfg_talos_image_type }}-amd64.iso"
-        dest: "{{ taloscfg_target_dir }}/{{ taloscfg_schematic_response.json.id }}-{{ taloscfg_talos_version }}-{{ taloscfg_talos_image_type }}-amd64.iso"
+        dest: "{{ taloscfg_target_dir }}/{{ taloscfg_cluster_name }}/talos_{{ taloscfg_cluster_name }}_{{ taloscfg_talos_version }}_{{ taloscfg_talos_image_type }}_amd64.iso"
         mode: "0644"
       run_once: true
 
