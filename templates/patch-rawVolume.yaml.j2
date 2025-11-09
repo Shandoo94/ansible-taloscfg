@@ -1,0 +1,21 @@
+{% for volumes in taloscfg_rawVolume_list %}
+{% for n in range(volumes.count) %}
+---
+apiVersion: v1alpha1
+kind: RawVolumeConfig
+name: {{ volumes.name }}-{{ n }}
+{% if volumes.diskSelector is defined or volumes.minSize is defined or volumes.maxSize is defined %}
+provisioning:
+{% if volumes.diskSelector is defined %}
+  diskSelector:
+    match: "{{ volumes.diskSelector }}"
+{% endif %}
+{% if volumes.minSize is defined %}
+  minSize: {{ volumes.minSize }}
+{% endif %}
+{% if volumes.maxSize is defined %}
+  maxSize: {{ volumes.maxSize }}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endfor %}

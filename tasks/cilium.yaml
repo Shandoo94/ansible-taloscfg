@@ -1,13 +1,7 @@
 - name: Generate cilium inline manifest
-  when: taloscfg_use_cilium_cni
   run_once: true
   block:
     - name: Render manifest from helm
-      vars:
-        taloscfg_helm_args: >-
-          {% for arg in taloscfg_cilium_helm_args %}
-            --set {{ arg }}
-          {% endfor %}
       ansible.builtin.command: >-
         helm template
         cilium cilium
@@ -26,7 +20,9 @@
         {% else %}
           --set kubeProxyReplacement=false
         {% endif %}
-        {{ taloscfg_helm_args }}
+        --set hubble.enabled=false
+        --set clustermesh.enabled=false
+        --set authentication.mutual.spire.enabled=false
       register: taloscfg_cilium_manifest
       changed_when: false
 

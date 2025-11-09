@@ -1,7 +1,4 @@
 - name: Generate patch for high availability
-  when:
-    - taloscfg_server_group is in group_names
-    - taloscfg_api_use_vip
   block:
     - name: Render vip patch
       ansible.builtin.template:

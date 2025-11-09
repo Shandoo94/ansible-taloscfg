@@ -1,0 +1,9 @@
+- name: Generate raw volume patches
+  ansible.builtin.template:
+    src: patch-rawVolume.yaml.j2
+    dest: "{{ taloscfg_target_dir }}/patch-rawVolume.yaml"
+    mode: "0600"
+
+- name: Create cli argument
+  ansible.builtin.set_fact:
+    taloscfg_rawVolume_arg: "--config-patch @{{ taloscfg_target_dir }}/patch-rawVolume.yaml"
